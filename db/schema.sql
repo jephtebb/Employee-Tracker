@@ -1,0 +1,17 @@
+CREATE TABLE dapartments(
+id INTEGER PRIMARY KEY,
+department_name VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE roles(
+id INTEGER PRIMARY KEY,
+job_title VARCHAR(50) NOT NULL,
+salary INTEGER NOT NULL,
+);
+
+CREATE TABLE employees(
+id INTEGER PRIMARY KEY,
+first_name VARCHAR(50) NOT NULL,
+last_name VARCHAR(50) NOT NULL,
+manager VARCHAR(50) NOT NULL,
+);
