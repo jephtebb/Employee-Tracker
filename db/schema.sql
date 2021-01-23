@@ -1,17 +1,23 @@
+DROP DATABASE IF EXISTS employeeTrackerDatabase;
+CREATE DATABASE employeeTrackerDatabase;
+USE employeeTrackerDatabase;
+
 CREATE TABLE dapartments(
-id INTEGER PRIMARY KEY,
-department_name VARCHAR(100) NOT NULL
+id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+department_name VARCHAR(130) NOT NULL
 );
 
 CREATE TABLE roles(
-id INTEGER PRIMARY KEY,
-job_title VARCHAR(50) NOT NULL,
+id INTEGER AUTO_INCREMENT PRIMARY KEY NOT NULL,
+role_title VARCHAR(50) NOT NULL,
 salary INTEGER NOT NULL,
+department_id INT NOT NULL
 );
 
 CREATE TABLE employees(
-id INTEGER PRIMARY KEY,
+id INTEGER AUTO_INCREMENT PRIMARY KEY NOT NULL,
 first_name VARCHAR(50) NOT NULL,
 last_name VARCHAR(50) NOT NULL,
-manager VARCHAR(50) NOT NULL,
+role_id INT NOT NULL,
+manager_id VARCHAR(50) 
 );
