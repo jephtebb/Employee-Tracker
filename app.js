@@ -1,21 +1,13 @@
 const inquirer = require("inquirer");
 const cTable = require('console.table');
 const mysql = require('mysql2');
-
+require('dotenv').config();
 
 var connection = mysql.createConnection({
     host: "localhost",
-    port: 3001,
     user: "root",
-    password: "password",
+    password: `${process.env.password}`,
     database: "employeeTrackerDatabase"
-});
-
-connection.connect(err=> {
-    if (err) throw err;
-    console.log("connected as id " + connection.threadId + "\n");
-
-
 });
 
 const questionsPrompt = () => {
@@ -33,6 +25,7 @@ const questionsPrompt = () => {
           "add a role",
           "add an employee",
           "update an employee role",
+          "Done!"
         ],
       },
     ])
@@ -70,11 +63,49 @@ const questionsPrompt = () => {
     });
 };
 
-const viewDepartments = () => {};
+const viewDepartments = () => {
+  connection.query("SELECT * FROM departments", (err, data) => {
+    console.table(data);
+    questionsPrompt();
+})
 
-const allRoles = () => {};
+};
 
-const viewEmployees = () => {};
+const allRoles = () => {
+  const allRoleSql = `SELECT title, roles.id, department_name, salary FROM roles
+                      left join departments
+                      on roles.department_id = departments.id;`
+
+  connection.query(allRoleSql, (err, data)=> {
+    console.table(data);
+    questionsPrompt();
+})
+};
+
+const viewEmployees = () => {
+   const employeeSql = `ALTER TABLE employees
+                        ADD COLUMN manager VARCHAR(50);
+                        UPDATE employees 
+                        SET manager="Esther Rivera" WHERE manager_id= 1;
+                        UPDATE employees
+                        SET manager="John Provenzano" WHERE manager_id= 2;
+                        UPDATE employees
+                        SET manager = "Carlos Perez" WHERE manager_id = 3;
+                        SELECT first_name, last_name, title, department_name, salary, manager FROM employees
+                        left join roles
+                        on employees.role_id = roles.id
+                        left join departments
+                        on roles.department_id = departments.id;`
+  
+  connection.query(employeeSql, (err, data)=> {
+    if (err){
+      console.log(err.message);
+      return ;
+    }
+    console.table(data);
+    questionsPrompt();
+})
+};
 
 const addDepartment = () => {
   inquirer.prompt([{
@@ -112,7 +143,6 @@ const addRole = () => {
     questionsPrompt();
 })
 };
-
 const addEmployee = () => {
   inquirer
     .prompt([
@@ -144,7 +174,7 @@ const addEmployee = () => {
           [answer.firstName, answer.lastName, answer.roleId, answer.managerId],
           (err, data) => {
             if (err) throw err;
-            console.table("Successfully updated!");
+            console.log("Successfully updated!");
             questionsPrompt();
             
           }
@@ -156,15 +186,32 @@ const addEmployee = () => {
           [answer.firstName, answer.lastName, answer.roleId],
           (err, data) => {
             if (err) throw err;
-            console.table("Successfully updated!");
+            console.log("Successfully updated!");
             questionsPrompt();
           }
         );
-        
+       
       }
     });
 };
 
-const updateRole = () => {};
+const updateRole = () => {
+  inquirer.prompt([
+    {
+        message: "Enter the id of the employee you'd like to update",
+        type: "number",
+        name: "updateID"
+    }, {
+        message: "enter the new role ID:",
+        type: "number",
+        name: "role_id"
+    }
+]).then (answer => {
+    connection.query("UPDATE employees SET role_id = ? WHERE id = ?", [answer.role_id, answer.updateID], (err, data) => {
+        console.table(data);
+    })
+    questionsPrompt();
+})
+};
 
 questionsPrompt();
