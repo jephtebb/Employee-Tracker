@@ -83,17 +83,11 @@ const allRoles = () => {
 };
 
 const viewEmployees = () => {
-   const employeeSql = `ALTER TABLE employees
-                        ADD COLUMN manager VARCHAR(50);
-                        UPDATE employees 
-                        SET manager="Esther Rivera" WHERE manager_id= 1;
-                        UPDATE employees
-                        SET manager="John Provenzano" WHERE manager_id= 2;
-                        UPDATE employees
-                        SET manager = "Carlos Perez" WHERE manager_id = 3;
-                        SELECT first_name, last_name, title, department_name, salary, manager FROM employees
+   const employeeSql = `SELECT e.first_name, e.last_name, title, department_name, salary, m.first_name AS manager FROM employees e
+                        LEFT JOIN employees m
+                        ON e.manager_id = m.id
                         left join roles
-                        on employees.role_id = roles.id
+                        on e.role_id = roles.id
                         left join departments
                         on roles.department_id = departments.id;`
   
